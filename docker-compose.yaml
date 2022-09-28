@@ -1,0 +1,78 @@
+version: '3'
+
+services:
+  keycloakdb:
+    container_name: keycloakdb
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: keycloakdb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - keycloakdb:/opt/homebrew/var/postgres
+    networks:
+      - keycloak-network
+
+  keycloak_service:
+    container_name: keycloak_service
+    depends_on:
+      - keycloakdb
+    environment:
+      DB_VENDOR: postgres
+      DB_DATABASE: keycloakdb
+      DB_USER: admin
+      DB_PASSWORD: admin
+      KEYCLOAK_ADMIN: sphokuhle
+      KEYCLOAK_ADMIN_PASSWORD: sphokuhle
+      KEYCLOAK_IMPORT: ./scripts/keycloak_migration/demo_realm.json
+    image: quay.io/keycloak/keycloak:19.0.2
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    networks:
+      - keycloak-network
+    command: "start-dev"
+    entrypoint: ./scripts/keycloak_migration/keycloak-entrypoint.sh
+    volumes:
+      - ./scripts/keycloak_migration:/scripts/keycloak_migration
+# --hostname-strict-backchannel=true  --hostname=keycloak_service
+
+  demodb:
+    container_name: demodb
+    image: postgres:latest
+    environment:
+      - POSTGRES_PASSWORD=posPassword1
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=demodatabase
+    restart: always
+    ports:
+      - "5432:5433"
+    volumes:
+      - demodb:/opt/homebrew/var/postgres
+      - ./scripts/postgresql:/docker-entrypoint-initdb.d
+    networks:
+      - keycloak-network
+
+  demo_service:
+    container_name: demo_service
+    image: sphokuhle/demo
+    environment:
+      - "SPRING_PROFILES_ACTIVE=compose"
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - demodb
+    ports:
+      - "8443:8443"
+    restart: "no"
+    networks:
+      - keycloak-network
+
+volumes:
+  demodb:
+  keycloakdb:
+
+networks:
+  keycloak-network:
