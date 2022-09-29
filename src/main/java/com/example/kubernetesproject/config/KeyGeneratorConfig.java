@@ -19,10 +19,6 @@ import java.security.interfaces.RSAPublicKey;
 @Component
 @Slf4j
 public class KeyGeneratorConfig {
-
-    private static final Logger logger = LoggerFactory.getLogger(KeyGeneratorConfig.class.getCanonicalName());
-//    @Value("${app.security.jwtPublicKey}")
-//    private String certificateKey;
     @Autowired
     private KeycloakKeyService keycloakKeyService;
 

@@ -13,6 +13,8 @@ services:
       - keycloakdb:/opt/homebrew/var/postgres
     networks:
       - keycloak-network
+    ports:
+      - "5433:5434"
 
   keycloak_service:
     container_name: keycloak_service

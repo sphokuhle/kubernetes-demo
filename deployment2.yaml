@@ -113,11 +113,15 @@ spec:
       containers:
         - name: keycloak
           image: jboss/keycloak:13.0.1
+          entrypoint: ./scripts/keycloak_migration/keycloak-entrypoint.sh
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-storage
           env:
             - name: DB_VENDOR
               value: 'postgres'
             - name: DB_ADDR
-              value: '192.168.1.103'
+              value: 'keycloakdb-service.default'
             - name: DB_DATABASE
               value: 'keycloakdb'
             - name: DB_USER
@@ -128,6 +132,8 @@ spec:
               value: 'sphokuhle'
             - name: KEYCLOAK_ADMIN_PASSWORD
               value: 'sphokuhle'
+            - name: KEYCLOAK_IMPORT
+              value: './scripts/keycloak_migration/demo_realm.json'
 ---
 apiVersion: v1
 kind: Service
