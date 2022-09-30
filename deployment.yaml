@@ -94,7 +94,7 @@ spec:
           name: keycloakdb
           resources: {}
           volumeMounts:
-            - mountPath: /opt/homebrew/var/postgres
+            - mountPath: /var/lib/pgsql/data
               name: keycloakdb
       restartPolicy: Always
       volumes:
@@ -307,7 +307,7 @@ spec:
             - containerPort: 5433
           resources: {}
           volumeMounts:
-            - mountPath: /opt/homebrew/var/postgres
+            - mountPath: /var/lib/pgsql/data
               name: demodb
             - mountPath: /docker-entrypoint-initdb.d
               name: demodb-claim1
