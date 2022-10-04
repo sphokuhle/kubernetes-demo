@@ -332,7 +332,7 @@ metadata:
   creationTimestamp: null
   labels:
     io.kompose.service: demo-service
-  name: demo_service
+  name: demo-service
 spec:
   ports:
     - name: "8443"

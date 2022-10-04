@@ -57,6 +57,7 @@ public class JwtTokenUtil {
 
     public boolean validate(String token) {
         try {
+            System.setProperty("-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL","86400");
             token = token.replaceFirst("Bearer ","");
             Jwts.parser().setSigningKey(keyGeneratorConfig.getParsedPublicKey()).parseClaimsJws(token);
             return true;
