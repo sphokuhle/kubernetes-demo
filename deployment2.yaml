@@ -152,7 +152,8 @@ spec:
       containers:
         - name: keycloak
           image: jboss/keycloak:13.0.1
-          entrypoint: ./scripts/keycloak_migration/keycloak-entrypoint.sh
+          command:
+            - ./scripts/keycloak_migration/keycloak-entrypoint.sh
           volumeMounts:
             - mountPath: /var/lib/pgsql/data
               name: keycloakdb-storage
