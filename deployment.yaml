@@ -131,7 +131,7 @@ metadata:
   creationTimestamp: null
   labels:
     io.kompose.service: keycloak-service
-  name: keycloak_service
+  name: keycloak-service
 spec:
   ports:
     - name: "8080"
