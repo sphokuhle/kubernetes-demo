@@ -7,7 +7,7 @@ metadata:
     type: local
     app: demodb-volume
 spec:
-  storageClassname: manual
+  storageClassName: manual
   capacity:
     storage: 350Mi
   accessModes:
@@ -23,7 +23,7 @@ metadata:
   labels:
     app: demodb-volume
 spec:
-  storageClassname: manual
+  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:
@@ -41,7 +41,7 @@ metadata:
     type: local
     app: postgres-volume
 spec:
-  storageClassname: manual
+  storageClassName: manual
   capacity:
     storage: 350Mi
   accessModes:
@@ -57,7 +57,7 @@ metadata:
   labels:
     app: postgres-volume
 spec:
-  storageClassname: manual
+  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:
