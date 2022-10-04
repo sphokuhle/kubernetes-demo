@@ -1,31 +1,70 @@
-#KEYCLOAK DATABASE
+#DEMO DATABASE VOLUMES
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: demodb-volume
+  labels:
+    type: local
+    app: demodb-volume
+spec:
+  storageClassname: manual
+  capacity:
+    storage: 350Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/var/lib/pgsql/data"
+  persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: demodb-volume-claim
+  labels:
+    app: demodb-volume
+spec:
+  storageClassname: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 250Mi
+status: {}
+---
+
+#KEYCLOAK DATABASE VOLUMES
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: postgres-volume
   labels:
     type: local
+    app: postgres-volume
 spec:
+  storageClassname: manual
   capacity:
-    storage: 100Mi
+    storage: 350Mi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/var/lib/postgresql/data"
+    path: "/var/lib/pgsql/data"
   persistentVolumeReclaimPolicy: Retain
-
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: postgres-volume-claim
+  labels:
+    app: postgres-volume
 spec:
+  storageClassname: manual
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 100Mi
+      storage: 250Mi
 status: {}
+
 ---
 apiVersion: v1
 kind: Service
@@ -73,11 +112,11 @@ spec:
               value: 'devOps'
           resources: {}
           volumeMounts:
-            - mountPath: /var/lib/postgresql/data
-              name: postgres-storage
+            - mountPath: /var/lib/pgsql/data
+              name: keycloakdb-storage
       restartPolicy: Always
       volumes:
-        - name: postgres-storage
+        - name: keycloakdb-storage
           persistentVolumeClaim:
             claimName: postgres-volume-claim
 status: {}
@@ -115,8 +154,8 @@ spec:
           image: jboss/keycloak:13.0.1
           entrypoint: ./scripts/keycloak_migration/keycloak-entrypoint.sh
           volumeMounts:
-            - mountPath: /var/lib/postgresql/data
-              name: postgres-storage
+            - mountPath: /var/lib/pgsql/data
+              name: keycloakdb-storage
           env:
             - name: DB_VENDOR
               value: 'postgres'
@@ -165,6 +204,14 @@ spec:
       containers:
         - name: demodb
           image: postgres:latest
+          imagePullPolicy: "IfNotPresent"
+          volumeMounts:
+            - mountPath: /var/lib/pgsql/data
+              name: demodb-storage
+          volumes:
+            - name: demodb-storage
+              persistentVolumeClaim:
+                claimName: demodb-volume-claim
           env:
             - name: POSTGRES_PASSWORD
               value: 'posPassword1'
